@@ -34,6 +34,11 @@ namespace Identity
 
             services.AddIdentity<AppUser,IdentityRole>(opt=> {
 
+                opt.User.RequireUniqueEmail = false;
+                opt.User.AllowedUserNameCharacters="abcçdefgðhýijklmnoöçpqrsþtuüvwxyzABCÇDEFGÐHIÝJKLMNOÖPQRSÞTUÜVWXYZ0123456789-._";
+
+
+
 
                 opt.Password.RequireDigit = false;
                 opt.Password.RequireNonAlphanumeric = false;
