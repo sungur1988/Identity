@@ -1,4 +1,5 @@
 using Identity.Models;
+using Identity.Validations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,8 +32,19 @@ namespace Identity
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnectionString"));
             });
 
-            services.AddIdentity<AppUser,IdentityRole>()
-                .AddEntityFrameworkStores<AppDbContext>();  
+            services.AddIdentity<AppUser,IdentityRole>(opt=> {
+
+
+                opt.Password.RequireDigit = false;
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireLowercase = false;
+                opt.Password.RequireUppercase = false;
+                opt.Password.RequiredLength = 4;
+            
+            
+            
+            }).AddPasswordValidator<CustomPasswordValidator>()
+            .AddEntityFrameworkStores<AppDbContext>();  
 
 
             services.AddMvc(option=>
