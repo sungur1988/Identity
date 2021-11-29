@@ -12,15 +12,15 @@ namespace Identity.Validations
         public Task<IdentityResult> ValidateAsync(UserManager<AppUser> manager, AppUser user, string password)
         {
             List<IdentityError> errors = new List<IdentityError>();
-            if (password.ToLower().Contains(user.UserName))
+            if (password.ToLower().Contains(user.UserName.ToLower()))
             {
-                if (!user.Email.ToLower().Contains(user.UserName))
+                if (!(user.Email.Contains(user.UserName)&&password.ToLower().Contains(user.Email.ToLower())))
                 {
                     errors.Add(new IdentityError { Code = "PasswordContainUserName", Description="Şifre kullanıcı adı içermemelidir." });
                 }
             }
 
-            if (password.ToLower().Contains(user.Email))
+            if (password.ToLower().Contains(user.Email.ToLower()))
             {
                 errors.Add(new IdentityError { Code = "PasswordContainEmail", Description = "Şifre email adresi içermemelidir." });
             }
@@ -31,6 +31,8 @@ namespace Identity.Validations
                     errors.Add(new IdentityError { Code = "PasswordContainsConsecutiveCharacter", Description = "Şifre aynı karakteri üç defa ard arda içeremez." });
                 }
             }
+
+
             if (errors.Count==0)
             {
                 return Task.FromResult(IdentityResult.Success);

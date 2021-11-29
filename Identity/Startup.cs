@@ -32,6 +32,26 @@ namespace Identity
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnectionString"));
             });
 
+            CookieBuilder cookieBuilder = new CookieBuilder
+            {
+                Name = "MyBlog",
+                HttpOnly = false,
+                SameSite = SameSiteMode.Lax,
+                SecurePolicy = CookieSecurePolicy.SameAsRequest
+            };
+
+            services.ConfigureApplicationCookie(opt =>
+            {
+                opt.LoginPath = new PathString("/Home/LogIn");
+                opt.Cookie = cookieBuilder;
+                opt.ExpireTimeSpan = TimeSpan.FromDays(60);
+                opt.SlidingExpiration = true;
+            });
+
+
+
+
+
             services.AddIdentity<AppUser,IdentityRole>(opt=> {
 
                 opt.User.RequireUniqueEmail = false;
@@ -49,6 +69,7 @@ namespace Identity
             
             
             }).AddPasswordValidator<CustomPasswordValidator>()
+            .AddErrorDescriber<CustomIdentityErrorDescriber>()
             .AddEntityFrameworkStores<AppDbContext>();  
 
 
