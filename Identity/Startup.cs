@@ -52,9 +52,9 @@ namespace Identity
 
 
 
-            services.AddIdentity<AppUser,IdentityRole>(opt=> {
+            services.AddIdentity<AppUser,AppRole>(opt=> {
 
-                opt.User.RequireUniqueEmail = false;
+                opt.User.RequireUniqueEmail = true;
                 opt.User.AllowedUserNameCharacters="abcçdefgðhýijklmnoöçpqrsþtuüvwxyzABCÇDEFGÐHIÝJKLMNOÖPQRSÞTUÜVWXYZ0123456789-._";
 
 

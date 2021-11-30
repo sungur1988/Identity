@@ -23,6 +23,7 @@ namespace Identity.ViewModels
         public string Password { get; set; }
 
         [Display(Name ="Tel No:")]
+        [DataType(DataType.PhoneNumber)]
         public string PhoneNumber { get; set; }
     }
 }
