@@ -32,21 +32,7 @@ namespace Identity
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnectionString"));
             });
 
-            CookieBuilder cookieBuilder = new CookieBuilder
-            {
-                Name = "MyBlog",
-                HttpOnly = false,
-                SameSite = SameSiteMode.Lax,
-                SecurePolicy = CookieSecurePolicy.SameAsRequest
-            };
-
-            services.ConfigureApplicationCookie(opt =>
-            {
-                opt.LoginPath = new PathString("/Home/LogIn");
-                opt.Cookie = cookieBuilder;
-                opt.ExpireTimeSpan = TimeSpan.FromDays(60);
-                opt.SlidingExpiration = true;
-            });
+            
 
 
 
@@ -70,11 +56,29 @@ namespace Identity
             
             }).AddPasswordValidator<CustomPasswordValidator>()
             .AddErrorDescriber<CustomIdentityErrorDescriber>()
-            .AddEntityFrameworkStores<AppDbContext>();  
+            .AddEntityFrameworkStores<AppDbContext>();
 
 
-            services.AddMvc(option=>
-            option.EnableEndpointRouting=false);
+            CookieBuilder cookieBuilder = new CookieBuilder
+            {
+                Name = "MyBlog",
+                HttpOnly = false,
+                SameSite = SameSiteMode.Lax,
+                SecurePolicy = CookieSecurePolicy.SameAsRequest
+            };
+
+            services.ConfigureApplicationCookie(opt =>
+            {
+                opt.LoginPath = new PathString("/Home/LogIn");
+                opt.Cookie = cookieBuilder;
+                opt.ExpireTimeSpan = TimeSpan.FromDays(60);
+                opt.SlidingExpiration = true;
+            });
+
+
+            services.AddMvc(options=> {
+                options.EnableEndpointRouting = false;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

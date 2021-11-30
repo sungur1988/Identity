@@ -10,7 +10,7 @@ namespace Identity.ViewModels
     {
         [Required(ErrorMessage ="Email adresi boş olamaz.")]
         [Display(Name ="Email adresi")]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "Email formatı yanlış")]
         public string Email { get; set; }
 
         [Required(ErrorMessage ="Şifre alanı boş geçilemez.")]

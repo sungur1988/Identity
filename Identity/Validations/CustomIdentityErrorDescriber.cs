@@ -38,7 +38,7 @@ namespace Identity.Validations
             return new IdentityError
             {
                 Code = "InvalidEmail",
-                Description = $"Email adresiniz doğru formatta olmalıdır."
+                Description = "Email adresiniz doğru formatta olmalıdır."
             };
         }
         public override IdentityError PasswordTooShort(int length)
