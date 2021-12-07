@@ -28,5 +28,45 @@ namespace Identity.Controllers
             UserViewModel userViewModel = user.Adapt<UserViewModel>();
             return View(userViewModel);
         }
+
+        public IActionResult PasswordChange()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PasswordChange(PasswordChangeViewModel passwordChangeViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                AppUser appUser = _userManager.FindByNameAsync(User.Identity.Name).Result;
+                bool exist = _userManager.CheckPasswordAsync(appUser, passwordChangeViewModel.PasswordOld).Result;
+                if (exist)
+                {
+                    var result = _userManager.ChangePasswordAsync(appUser, passwordChangeViewModel.PasswordOld, passwordChangeViewModel.PasswordNew).Result;
+                    if (result.Succeeded)
+                    {
+                        await _userManager.UpdateSecurityStampAsync(appUser);
+                        await _signInManager.SignOutAsync();
+                        await _signInManager.PasswordSignInAsync(appUser, passwordChangeViewModel.PasswordNew, true, false);
+                        ViewBag.success = "true";
+
+                    }
+                    else
+                    {
+                        foreach (var item in result.Errors)
+                        {
+                            ModelState.AddModelError("", item.Description);
+                        }
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Girdiğiniz eski şifreniz yanlıştır.");
+                }
+
+            }
+            return View(passwordChangeViewModel);
+        }
     }
 }
