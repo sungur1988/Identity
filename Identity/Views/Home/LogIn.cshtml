@@ -6,8 +6,8 @@
 
 <div class="row">
     <div class="col-md-4 offset-md-4">
-<h4>Kullanıcı Giriş</h4>
-<hr />
+        <h4>Kullanıcı Giriş</h4>
+        <hr />
 
         <form asp-action="LogIn">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -30,7 +30,9 @@
                 <input type="submit" value="Giriş" class="btn btn-primary" />
             </div>
         </form>
+        <a class="btn btn-link" asp-action="ResetPassword">Şifremi Unuttum</a>
     </div>
+    
 </div>
 
 

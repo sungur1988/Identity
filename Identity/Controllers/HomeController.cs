@@ -1,4 +1,5 @@
-﻿using Identity.Models;
+﻿using Identity.Helpers;
+using Identity.Models;
 using Identity.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,7 @@ namespace Identity.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
         }
+
         public IActionResult LogIn(string ReturnUrl)
         {
             TempData["ReturnUrl"] = ReturnUrl;
@@ -57,13 +59,12 @@ namespace Identity.Controllers
                         if (fail==3)
                         {
                             await _userManager.SetLockoutEndDateAsync(user, new DateTimeOffset(DateTime.Now.AddMinutes(60)));
-                            ModelState.AddModelError("", "Hesabınız 3 başarısız girişten dolayı 20 dakika süreyle kitlenmiştir. Lütfen daha sonra tekrar deneyiniz.")
+                            ModelState.AddModelError("", "Hesabınız 3 başarısız girişten dolayı 20 dakika süreyle kitlenmiştir. Lütfen daha sonra tekrar deneyiniz.");
                         }
                         else
                         {
                             ModelState.AddModelError("", "Email adresi veya şifreniz yanlış lütfen tekrar deneyiniz");
                         }
-                        ModelState.AddModelError("", "Bu email adresine kayıtlı kullanıcı bulunamadı.");
                     }
 
                 }
@@ -112,6 +113,71 @@ namespace Identity.Controllers
 
             }
             return View(userViewModel);
+        }
+
+        public IActionResult ResetPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ResetPassword([Bind("Email")]ResetPasswordViewModel resetPasswordViewModel)
+        {
+            var user = _userManager.FindByEmailAsync(resetPasswordViewModel.Email).Result;
+            if (user!= null)
+            {
+               
+                string passwordResetToken = _userManager.GeneratePasswordResetTokenAsync(user).Result;
+
+                string passwordResetLink = Url.Action("ResetPasswordConfirm", "Home" , new
+                {
+                    userId = user.Id,
+                    token = passwordResetToken
+                }, HttpContext.Request.Scheme);
+
+                PasswordResetHelper.SendEmail(passwordResetLink, user.Email);
+                ViewBag.status = "success";
+            }
+            else
+            {
+                ModelState.AddModelError("", "Belirtilen email adresine ait herhangi bir kullanıcı bulunamamıştır.");
+            }
+            return View(resetPasswordViewModel);
+        }
+        public IActionResult ResetPasswordConfirm(string userId, string token)
+        {
+            TempData["userId"] = userId;
+            TempData["token"] = token;
+            return View();
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> ResetPasswordConfirm([Bind("PasswordNew")]ResetPasswordViewModel resetPasswordViewModel)
+        {
+            var user = await _userManager.FindByIdAsync(TempData["userId"].ToString());
+            if (user!=null)
+            {
+              var result = await _userManager.ResetPasswordAsync(user, TempData["token"].ToString(), resetPasswordViewModel.PasswordNew);
+                if (result.Succeeded)
+                {
+                    await _userManager.UpdateSecurityStampAsync(user);
+                    ViewBag.status = "success";
+
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Sistemsel bir hata meydana geldi lütfen tekrar deneyiniz.");
+            }
+            return View(resetPasswordViewModel);
+            
         }
     }
 }

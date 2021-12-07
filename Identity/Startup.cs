@@ -56,7 +56,7 @@ namespace Identity
             
             }).AddPasswordValidator<CustomPasswordValidator>()
             .AddErrorDescriber<CustomIdentityErrorDescriber>()
-            .AddEntityFrameworkStores<AppDbContext>();
+            .AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
 
             CookieBuilder cookieBuilder = new CookieBuilder
@@ -87,8 +87,8 @@ namespace Identity
             app.UseDeveloperExceptionPage();
             app.UseStatusCodePages();
             app.UseStaticFiles();
-            app.UseMvcWithDefaultRoute();
             app.UseAuthentication();
+            app.UseMvcWithDefaultRoute();
         }
     }
 }
