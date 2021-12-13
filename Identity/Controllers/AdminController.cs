@@ -5,16 +5,15 @@ using System.Linq;
 
 namespace Identity.Controllers
 {
-    public class AdminController : Controller
+    public class AdminController : BaseController
     {
-        private UserManager<AppUser> _manager { get; }
-        public AdminController(UserManager<AppUser> manager)
+        public AdminController(UserManager<AppUser> userManager) : base(userManager,null)
         {
-            _manager = manager;
+            
         }
         public IActionResult Index()
         {
-            var users = _manager.Users.ToList();
+            var users = _userManager.Users.ToList();
             return View(users);
         }
     }

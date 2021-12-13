@@ -70,6 +70,7 @@ namespace Identity
             services.ConfigureApplicationCookie(opt =>
             {
                 opt.LoginPath = new PathString("/Home/LogIn");
+                opt.LogoutPath = new PathString("/Member/LogOut");
                 opt.Cookie = cookieBuilder;
                 opt.ExpireTimeSpan = TimeSpan.FromDays(60);
                 opt.SlidingExpiration = true;

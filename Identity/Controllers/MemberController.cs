@@ -2,25 +2,27 @@
 using Identity.ViewModels;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Identity.Enums;
 
 namespace Identity.Controllers
 {
     [Authorize]
-    public class MemberController : Controller
+    public class MemberController : BaseController
     {
-        private UserManager<AppUser> _userManager { get; }
-        private SignInManager<AppUser> _signInManager { get; }
+       
 
-        public MemberController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public MemberController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager) : base(userManager,signInManager)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+           
         }
         public IActionResult Index()
         {
@@ -54,10 +56,7 @@ namespace Identity.Controllers
                     }
                     else
                     {
-                        foreach (var item in result.Errors)
-                        {
-                            ModelState.AddModelError("", item.Description);
-                        }
+                        AddModelError(result);
                     }
                 }
                 else
@@ -67,6 +66,69 @@ namespace Identity.Controllers
 
             }
             return View(passwordChangeViewModel);
+        }
+
+
+        public IActionResult UserEdit()
+        {
+            AppUser user = CurrentUser;
+            UserViewModel userViewModel = user.Adapt<UserViewModel>();
+            ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
+            return View(userViewModel);
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UserEdit(UserViewModel userViewModel,IFormFile userPicture)
+        {
+            ModelState.Remove("Password");
+            ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
+            if (ModelState.IsValid)
+            {
+                AppUser user = CurrentUser;
+                if (userPicture != null && userPicture.Length>0)
+                {
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(userPicture.FileName);
+                    var path = Path.Combine(Directory.GetCurrentDirectory() + "/wwwroot/UserPictures", fileName);
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await userPicture.CopyToAsync(stream);
+                        user.Picture = "/UserPictures/"+fileName;
+
+                    }
+                }
+
+
+
+
+                user.UserName = userViewModel.UserName;
+                user.PhoneNumber = userViewModel.PhoneNumber;
+                user.Email = userViewModel.Email;
+                user.BirthDay = userViewModel.BirthDay;
+                user.Gender = (int)userViewModel.Gender;
+                user.City = userViewModel.City;
+
+                var result = await _userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    await _userManager.UpdateSecurityStampAsync(user);
+                    await _signInManager.SignOutAsync();
+                    await _signInManager.SignInAsync(user, true);
+                    ViewBag.success = "true";
+                }
+                else
+                {
+                    AddModelError(result);
+                }
+
+            }
+            return View(userViewModel);
+
+        }
+
+        public async void LogOut()
+        {
+            await _signInManager.SignOutAsync();
         }
     }
 }

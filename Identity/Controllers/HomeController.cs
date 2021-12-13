@@ -10,15 +10,13 @@ using System.Threading.Tasks;
 
 namespace Identity.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        private UserManager<AppUser> _userManager { get; }
-        private SignInManager<AppUser> _signInManager { get; }
+       
 
-        public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager) : base(userManager,signInManager)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            
         }
 
         public IActionResult LogIn(string ReturnUrl)
@@ -80,6 +78,10 @@ namespace Identity.Controllers
 
         public IActionResult Index()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Member");
+            }
             return View();
         }
 
@@ -105,10 +107,7 @@ namespace Identity.Controllers
                 }
                 else
                 {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError("", error.Description);
-                    }
+                    AddModelError(result);
                 }
 
             }
@@ -166,10 +165,7 @@ namespace Identity.Controllers
                 }
                 else
                 {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError("", error.Description);
-                    }
+                    AddModelError(result);
                 }
             }
             else
