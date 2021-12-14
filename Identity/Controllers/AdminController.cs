@@ -7,14 +7,18 @@ namespace Identity.Controllers
 {
     public class AdminController : BaseController
     {
-        public AdminController(UserManager<AppUser> userManager) : base(userManager,null)
+        public AdminController(UserManager<AppUser> userManager,RoleManager<AppRole> roleManager) : base(userManager,null,roleManager)
         {
             
         }
         public IActionResult Index()
         {
-            var users = _userManager.Users.ToList();
-            return View(users);
+    
+            return View();
+        }
+        public IActionResult Users()
+        {
+            return View(_userManager.Users.ToList());
         }
     }
 }

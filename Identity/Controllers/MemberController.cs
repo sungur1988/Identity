@@ -130,5 +130,9 @@ namespace Identity.Controllers
         {
             await _signInManager.SignOutAsync();
         }
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }
