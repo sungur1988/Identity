@@ -78,7 +78,7 @@ namespace Identity
             });
 
 
-            services.AddMvc(options=> {
+            services.AddMvc(options => {
                 options.EnableEndpointRouting = false;
             });
         }
