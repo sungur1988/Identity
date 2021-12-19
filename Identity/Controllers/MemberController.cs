@@ -134,5 +134,16 @@ namespace Identity.Controllers
         {
             return View();
         }
+
+        [Authorize(Roles ="Editör,Admin")]
+        public IActionResult Editör()
+        {
+            return View();
+        }
+        [Authorize(Roles = "Manager,Admin")]
+        public IActionResult Manager()
+        {
+            return View();
+        }
     }
 }

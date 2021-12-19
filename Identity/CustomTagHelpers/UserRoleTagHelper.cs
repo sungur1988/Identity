@@ -36,7 +36,7 @@ namespace Identity.CustomTagHelpers
             {
                 foreach (var role in userRoles)
                 {
-                    html += $"<span class='badge badge-info'>{role}</span>";
+                    html += $"<div><span class='badge badge-info'>{role}</span></div>";
                 }
             }
 
