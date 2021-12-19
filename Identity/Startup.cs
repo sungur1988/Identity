@@ -1,5 +1,7 @@
+using Identity.ClaimsProvider;
 using Identity.Models;
 using Identity.Validations;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -32,9 +34,15 @@ namespace Identity
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnectionString"));
             });
 
-            
 
 
+            services.AddAuthorization(opt =>
+            {
+                opt.AddPolicy("CityPolicy", policy =>
+                {
+                    policy.RequireClaim("city", "Adana");
+                });
+            });
 
 
 
@@ -77,7 +85,7 @@ namespace Identity
                 opt.AccessDeniedPath = new PathString("/Member/AccessDenied");
             });
 
-
+            services.AddScoped<IClaimsTransformation, ClaimProvider>();
             services.AddMvc(options => {
                 options.EnableEndpointRouting = false;
             });

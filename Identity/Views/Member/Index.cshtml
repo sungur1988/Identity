@@ -12,7 +12,7 @@
     </div>
     <div class="col-sm-9">
 
-        <table class="table table-bordered table-striped table-responsive">
+        <table class="table table-bordered table-striped ">
             <tr>
                 <th>Kullanıcı ismi</th>
                 <td>@Model.UserName</td>
@@ -21,7 +21,6 @@
                 <th>E-posta</th>
                 <td>@Model.Email</td>
             </tr>
-
             <tr>
                 <th>Telefon no</th>
                 <td>@Model.PhoneNumber</td>
@@ -29,7 +28,7 @@
             <tr>
                 <th>Şehir</th>
                 <td>
-                    @if (Model.City == null)
+                    @if (@Model.City == null)
                     {
                         <span>Belirtilmemiş</span>
                     }
@@ -49,7 +48,7 @@
             <tr>
                 <th>Doğum Tarihi</th>
                 <td>
-                    @if (Model.BirthDay == null)
+                    @if (@Model.BirthDay == null)
                     {
                         <span>Belirtilmemiş</span>
                     }
@@ -61,8 +60,6 @@
 
                 </td>
             </tr>
-
-
         </table>
 
 

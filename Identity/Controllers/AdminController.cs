@@ -162,5 +162,11 @@ namespace Identity.Controllers
         }
 
 
+        public IActionResult Claims()
+        {
+            return View(User.Claims.ToList());
+        }
+
+
     }
 }

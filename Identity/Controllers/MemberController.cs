@@ -145,5 +145,11 @@ namespace Identity.Controllers
         {
             return View();
         }
+
+        [Authorize(Policy ="CityPolicy")]
+        public IActionResult Adana()
+        {
+            return View();
+        }
     }
 }
