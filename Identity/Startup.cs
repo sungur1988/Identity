@@ -42,6 +42,10 @@ namespace Identity
                 {
                     policy.RequireClaim("city", "Adana");
                 });
+                opt.AddPolicy("ViolencePolicy", policy =>
+                {
+                    policy.RequireClaim("violence");
+                });
             });
 
 

@@ -28,11 +28,26 @@ namespace Identity.ClaimsProvider
                     if (!principal.HasClaim(c => c.Type == "city"))
                     {
                         Claim cityClaim = new Claim("city", user.City, ClaimValueTypes.String, "LOCAL  AUTHORİTY");
+
                         identity.AddClaim(cityClaim);
                     }
                 }
 
+                if (user!=null && user.BirthDay != null)
+                {
+                    var today = DateTime.Now.Year;
+                    var age = today - user.BirthDay?.Year;
+                    if (age > 15)
+                    {
+                        Claim violenceClaim = new Claim("violence", true.ToString(), ClaimValueTypes.String, "LOCAL  AUTHORİTY");
+                        identity.AddClaim(violenceClaim);
+                    }
+
+                }
+
             }
+
+
 
             return principal;
         }

@@ -130,8 +130,20 @@ namespace Identity.Controllers
         {
             await _signInManager.SignOutAsync();
         }
-        public IActionResult AccessDenied()
+        public IActionResult AccessDenied(string ReturnUrl)
         {
+            if (ReturnUrl== "/Member/Adana")
+            {
+                ViewBag.message = "Bu sayfaya sadece adanalı kullanıcılar erişebilir.";
+            }
+            else if (ReturnUrl== "/Member/Violence")
+            {
+                ViewBag.message = "Bu sayfada şiddet içerikli videolar bulunduğundan dolayı sadece 15 yaşından büyükler erişebilir";
+            }
+            else
+            {
+                ViewBag.message = "Bu sayfaya erişim izniniz yoktur. Erişim izni almak için site yöneticisiyle görüşünüz";
+            }
             return View();
         }
 
@@ -148,6 +160,12 @@ namespace Identity.Controllers
 
         [Authorize(Policy ="CityPolicy")]
         public IActionResult Adana()
+        {
+            return View();
+        }
+
+        [Authorize(Policy = "ViolencePolicy")]
+        public IActionResult Violence()
         {
             return View();
         }
