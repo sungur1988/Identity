@@ -1,7 +1,9 @@
+using Identity.AuthorizationHandlers;
 using Identity.ClaimsProvider;
 using Identity.Models;
 using Identity.Validations;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -34,7 +36,7 @@ namespace Identity
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnectionString"));
             });
 
-
+            services.AddTransient<IAuthorizationHandler, ExpireDateHandler>();
 
             services.AddAuthorization(opt =>
             {
@@ -45,6 +47,10 @@ namespace Identity
                 opt.AddPolicy("ViolencePolicy", policy =>
                 {
                     policy.RequireClaim("violence");
+                });
+                opt.AddPolicy("ExpireDatePolicy", policy =>
+                {
+                    policy.AddRequirements(new ExpireDateRequirements());
                 });
             });
 

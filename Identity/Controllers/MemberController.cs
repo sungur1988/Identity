@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Identity.Enums;
+using System.Security.Claims;
 
 namespace Identity.Controllers
 {
@@ -140,6 +141,10 @@ namespace Identity.Controllers
             {
                 ViewBag.message = "Bu sayfada şiddet içerikli videolar bulunduğundan dolayı sadece 15 yaşından büyükler erişebilir";
             }
+            else if (ReturnUrl == "/Member/BorsaPage")
+            {
+                ViewBag.message = "Bu sayfaya ücretsiz erişim süreniz dolmuştur.Üyeliklerimize göz atabilirsiniz.";
+            }
             else
             {
                 ViewBag.message = "Bu sayfaya erişim izniniz yoktur. Erişim izni almak için site yöneticisiyle görüşünüz";
@@ -166,6 +171,26 @@ namespace Identity.Controllers
 
         [Authorize(Policy = "ViolencePolicy")]
         public IActionResult Violence()
+        {
+            return View();
+        }
+
+
+        public async Task<IActionResult> RedirectBorsa()
+        {
+            bool result = User.HasClaim(c => c.Type == "ExpireDate");
+            if (!result)
+            {
+                Claim expireClaim = new Claim("ExpireDate", DateTime.Now.AddDays(30).ToShortDateString(), ClaimValueTypes.String, "LocalAuthority");
+                await _userManager.AddClaimAsync(CurrentUser, expireClaim);
+                await _signInManager.SignOutAsync();
+
+                await _signInManager.SignInAsync(CurrentUser, true);
+            }
+            return RedirectToAction("BorsaPage");
+        }
+        [Authorize(Policy = "ExpireDatePolicy")]
+        public IActionResult BorsaPage()
         {
             return View();
         }

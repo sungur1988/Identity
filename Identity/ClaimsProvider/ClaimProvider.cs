@@ -25,7 +25,7 @@ namespace Identity.ClaimsProvider
                 AppUser user = await _userManager.FindByNameAsync(identity.Name);
                 if (user != null)
                 {
-                    if (!principal.HasClaim(c => c.Type == "city"))
+                    if (!principal.HasClaim(c => c.Type == "city")&&user.City!=null)
                     {
                         Claim cityClaim = new Claim("city", user.City, ClaimValueTypes.String, "LOCAL  AUTHORİTY");
 
