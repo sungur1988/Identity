@@ -33,6 +33,11 @@ namespace Identity.Controllers
                 
                 if (user != null)
                 {
+                    if (await _userManager.IsEmailConfirmedAsync(user)==false)
+                    {
+                        ModelState.AddModelError("", "Giriş yapabilmeniz için email adresiniz doğrulamanız gerekmektedir.Lütfen emailinizi kontrol ediniz.");
+                        return View(loginViewModel);
+                    }
                     if (await _userManager.IsLockedOutAsync(user))
                     {
                         ModelState.AddModelError("", "Hesabınız geçici süreliğine kilitlenmiştir. Lütfen daha sonra tekrar deneyiniz.");
@@ -103,6 +108,14 @@ namespace Identity.Controllers
                 IdentityResult result = await _userManager.CreateAsync(appUser, userViewModel.Password);
                 if (result.Succeeded)
                 {
+                    string emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
+                    string link = Url.Action("Confirm","Home",new { 
+                    
+                    userId= appUser.Id,
+                    token=emailConfirmationToken
+                    
+                    },HttpContext.Request.Scheme);
+                    Helpers.EmailConfirmation.SendEmail(link, appUser.Email);
                     return RedirectToAction("Login");
                 }
                 else
