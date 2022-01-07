@@ -39,8 +39,7 @@ namespace Identity.Controllers
         [HttpPost]
         public async Task<IActionResult> RoleCreate(RoleViewModel roleViewModel)
         {
-            if (ModelState.IsValid)
-            {
+            
                 AppRole appRole = new AppRole();
                 appRole.Name = roleViewModel.Name;
                 var result = await _rolemanager.CreateAsync(appRole);
@@ -53,7 +52,7 @@ namespace Identity.Controllers
                     AddModelError(result);
                 }
 
-            }
+            
 
             return View(roleViewModel);
         }

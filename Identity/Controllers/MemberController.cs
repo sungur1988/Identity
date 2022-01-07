@@ -40,8 +40,7 @@ namespace Identity.Controllers
         [HttpPost]
         public async Task<IActionResult> PasswordChange(PasswordChangeViewModel passwordChangeViewModel)
         {
-            if (ModelState.IsValid)
-            {
+            
                 AppUser appUser = _userManager.FindByNameAsync(User.Identity.Name).Result;
                 bool exist = _userManager.CheckPasswordAsync(appUser, passwordChangeViewModel.PasswordOld).Result;
                 if (exist)
@@ -65,7 +64,7 @@ namespace Identity.Controllers
                     ModelState.AddModelError("", "Girdiğiniz eski şifreniz yanlıştır.");
                 }
 
-            }
+            
             return View(passwordChangeViewModel);
         }
 
@@ -84,8 +83,7 @@ namespace Identity.Controllers
         {
             ModelState.Remove("Password");
             ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
-            if (ModelState.IsValid)
-            {
+           
                 AppUser user = CurrentUser;
                 if (userPicture != null && userPicture.Length>0)
                 {
@@ -122,7 +120,7 @@ namespace Identity.Controllers
                     AddModelError(result);
                 }
 
-            }
+            
             return View(userViewModel);
 
         }

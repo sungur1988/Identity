@@ -1,4 +1,5 @@
-﻿using Identity.Helpers;
+﻿using Identity.Filters;
+using Identity.Helpers;
 using Identity.Models;
 using Identity.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -24,11 +25,12 @@ namespace Identity.Controllers
             TempData["ReturnUrl"] = ReturnUrl;
             return View();
         }
+
+
         [HttpPost]
         public async Task<IActionResult> LogIn(LoginViewModel loginViewModel)
         {
-            if (ModelState.IsValid)
-            {
+            
                 var user = await _userManager.FindByEmailAsync(loginViewModel.Email);
                 
                 if (user != null)
@@ -71,11 +73,7 @@ namespace Identity.Controllers
                     }
 
                 }
-            }
-            else
-            {
-                ModelState.AddModelError("", "Geçersiz email adresi veya şifresi");
-            }
+           
 
 
             return View(loginViewModel);
@@ -99,8 +97,7 @@ namespace Identity.Controllers
         [HttpPost]
         public async Task<IActionResult> SignUp(UserViewModel userViewModel)
         {
-            if (ModelState.IsValid)
-            {
+            
                 AppUser appUser = new AppUser();
                 appUser.UserName = userViewModel.UserName;
                 appUser.Email = userViewModel.Email;
@@ -123,7 +120,7 @@ namespace Identity.Controllers
                     AddModelError(result);
                 }
 
-            }
+            
             return View(userViewModel);
         }
 

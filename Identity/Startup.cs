@@ -1,5 +1,6 @@
 using Identity.AuthorizationHandlers;
 using Identity.ClaimsProvider;
+using Identity.Filters;
 using Identity.Models;
 using Identity.Validations;
 using Microsoft.AspNetCore.Authentication;
@@ -98,6 +99,7 @@ namespace Identity
             services.AddScoped<IClaimsTransformation, ClaimProvider>();
             services.AddMvc(options => {
                 options.EnableEndpointRouting = false;
+                options.Filters.Add(typeof(ValidationFilter));
             });
         }
 
